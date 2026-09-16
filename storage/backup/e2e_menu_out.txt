@@ -1,0 +1,27 @@
+PASS | halaman menu OK (200 baris tabel)
+PASS | paginasi: menampilkan 1–5 dari 12
+PASS | No 5 ada
+PASS | tepat 5 baris tabel (No)
+PASS | ada dropdown urutan
+PASS | opsi abjad
+PASS | opsi harga kecil
+PASS | opsi harga besar
+PASS | ada link Berikutnya
+PASS | halaman-1 aktif
+PASS | sort abjad: nama pertama 'Air Mineral'
+PASS | sort harga terkecil: 'Air Mineral' (Rp4.000)
+PASS | sort harga terbesar: 'Nasi Goreng Spesial' (Rp22.000)
+PASS | halaman 2: menampilkan 6–11
+PASS | halaman 3: menampilkan 12
+PASS | menu baru 'Test E2E' muncul + flash success
+PASS | flash message tampil
+PASS | toggle -> Nonaktif di database
+PASS | hapus permanen dari database
+PASS | kasir: serverMenus dari DB
+PASS | kasir: 'Bakmi Godog' (nama DB asli) tampil
+PASS | menu nonaktif tidak dikirim ke kasir
+PASS | localStorage dibuang
+PASS | kasir: gambar SVG lokal
+PASS | toggle admin langsung berefek ke kasir
+----
+E2E MENU: PASS=25 FAIL=0

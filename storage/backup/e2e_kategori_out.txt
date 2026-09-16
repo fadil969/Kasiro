@@ -1,0 +1,17 @@
+PASS | halaman kategori OK
+PASS | kategori Makanan ada
+PASS | kategori Minuman ada
+PASS | jumlah menu Makanan sinkron (6)
+PASS | jumlah menu Minuman sinkron (6)
+FAIL | masih ada data dummy
+PASS | kategori 'Cemilan' tersimpan di DB
+PASS | kategori baru tampil + 0 menu
+PASS | jumlah kategori header = 3
+PASS | duplikat ditolak (masih 1 baris)
+PASS | jumlah Cemilan jadi 1 setelah menu ditambah
+PASS | menu kategori tak terdaftar ditolak
+PASS | hapus kategori terpakai ditolak DB
+PASS | flash error tampil
+PASS | rename cascade: menu ikut pindah
+PASS | nama lama hilang
+e2e_kategori_test.sh: line 108: unexpected EOF while looking for matching `"'

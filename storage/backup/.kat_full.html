@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="ko4bIhDeLgJZlk6VJVhzWxxpbnWQSaE7DGSBq5v4">
+    <title>Kategori Menu — POS Warung Makan</title>
+    <script>try{if(localStorage.getItem('kasiro-theme')==='dark')document.documentElement.classList.add('dark')}catch(e){}</script>
+    <link rel="icon" type="image/png" href="http://127.0.0.1:8899/images/favicon.png">
+    <link rel="shortcut icon" href="http://127.0.0.1:8899/favicon.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        // Seluruh teks (huruf maupun angka) memakai DM Sans
+                        sans: ['"DM Sans"', 'system-ui', 'sans-serif'],
+                        mono: ['"DM Sans"', 'ui-monospace', 'monospace'],
+                    },
+                    colors: {
+                        // Netral semantik (di-drive CSS variable → light/dark)
+                        ink:      'rgb(var(--n-ink) / <alpha-value>)',
+                        inksoft:  'rgb(var(--n-inksoft) / <alpha-value>)',
+                        inkmuted: 'rgb(var(--n-inkmuted) / <alpha-value>)',
+                        canvas:   'rgb(var(--n-canvas) / <alpha-value>)',
+                        paper:    'rgb(var(--n-paper) / <alpha-value>)',
+                        rule:     'rgb(var(--n-rule) / <alpha-value>)',
+                        rulesoft: 'rgb(var(--n-rulesoft) / <alpha-value>)',
+                        // Pemisah baris tabel — sedikit lebih tegas dari rulesoft
+                        rowsep:   'rgb(var(--n-rowsep) / <alpha-value>)',
+                        overlay:  'rgb(var(--n-overlay) / <alpha-value>)',
+                        btn:      'rgb(var(--n-btn) / <alpha-value>)',
+                        btnh:     'rgb(var(--n-btnh) / <alpha-value>)',
+                        // Alias kompatibilitas
+                        cream:    'rgb(var(--n-canvas) / <alpha-value>)',
+                        cream2:   'rgb(var(--n-cream2) / <alpha-value>)',
+                        // Aksen utama — primary blue
+                        primary: {50:'rgb(var(--p-50) / <alpha-value>)',100:'rgb(var(--p-100) / <alpha-value>)',200:'rgb(var(--p-200) / <alpha-value>)',300:'rgb(var(--p-300) / <alpha-value>)',400:'rgb(var(--p-400) / <alpha-value>)',500:'rgb(var(--p-500) / <alpha-value>)',600:'rgb(var(--p-600) / <alpha-value>)',700:'rgb(var(--p-700) / <alpha-value>)',800:'rgb(var(--p-800) / <alpha-value>)',900:'rgb(var(--p-900) / <alpha-value>)'},
+                        // Status
+                        success: {50:'rgb(var(--s-50) / <alpha-value>)',100:'rgb(var(--s-100) / <alpha-value>)',200:'rgb(var(--s-200) / <alpha-value>)',300:'rgb(var(--s-300) / <alpha-value>)',400:'rgb(var(--s-400) / <alpha-value>)',500:'rgb(var(--s-500) / <alpha-value>)',600:'rgb(var(--s-600) / <alpha-value>)',700:'rgb(var(--s-700) / <alpha-value>)',800:'rgb(var(--s-800) / <alpha-value>)',900:'rgb(var(--s-900) / <alpha-value>)'},
+                        danger:  {50:'rgb(var(--d-50) / <alpha-value>)',100:'rgb(var(--d-100) / <alpha-value>)',200:'rgb(var(--d-200) / <alpha-value>)',300:'rgb(var(--d-300) / <alpha-value>)',400:'rgb(var(--d-400) / <alpha-value>)',500:'rgb(var(--d-500) / <alpha-value>)',600:'rgb(var(--d-600) / <alpha-value>)',700:'rgb(var(--d-700) / <alpha-value>)',800:'rgb(var(--d-800) / <alpha-value>)',900:'rgb(var(--d-900) / <alpha-value>)'},
+                        warning: {50:'rgb(var(--w-50) / <alpha-value>)',100:'rgb(var(--w-100) / <alpha-value>)',200:'rgb(var(--w-200) / <alpha-value>)',300:'rgb(var(--w-300) / <alpha-value>)',400:'rgb(var(--w-400) / <alpha-value>)',500:'rgb(var(--w-500) / <alpha-value>)',600:'rgb(var(--w-600) / <alpha-value>)',700:'rgb(var(--w-700) / <alpha-value>)',800:'rgb(var(--w-800) / <alpha-value>)',900:'rgb(var(--w-900) / <alpha-value>)'},
+                    },
+                    boxShadow: {
+                        'card': '0 1px 2px 0 rgb(var(--n-shadow) / 0.05)',
+                        'pop':  '0 8px 24px -8px rgb(var(--n-shadow) / 0.35)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            /* LIGHT THEME — latar terang, maka foreground dibuat lebih gelap
+               agar semua teks & diagram kontras dan mudah dibaca */
+            --n-ink: 2 6 23;          /* #020617 teks utama */
+            --n-inksoft: 51 65 85;    /* #334155 */
+            --n-inkmuted: 71 85 105;  /* #475569 */
+            --n-canvas: 248 250 252;  /* #F8FAFC background */
+            --n-paper: 255 255 255;   /* #FFFFFF surface */
+            --n-rule: 203 213 225;    /* #CBD5E1 border */
+            --n-rulesoft: 226 232 240;/* #E2E8F0 */
+            --n-rowsep: 203 213 225;  /* #CBD5E1 pemisah baris tabel — sedikit lebih tegas */
+            --n-cream2: 241 245 249;  /* hover surface */
+            --n-overlay: 15 23 42;
+            --n-btn: 15 23 42;
+            --n-btnh: 51 65 85;
+            --n-shadow: 15 23 42;
+            --c-ticket: #CBD5E1;
+            --p-50: 239 246 255; --p-100: 219 234 254; --p-200: 191 219 254; --p-300: 147 197 253; --p-400: 96 165 250; --p-500: 37 99 235;  /* #2563EB */
+            --p-600: 29 78 216;   /* #1D4ED8 primary — biru gelap */ --p-700: 30 64 175;   /* #1E40AF hover */
+            --p-800: 30 58 138;   /* #1E3A8A */ --p-900: 23 37 84;   /* #172554 */
+            --s-50: 236 253 245; --s-100: 209 250 229; --s-200: 167 243 208; --s-300: 110 231 183; --s-400: 52 211 153; --s-500: 16 185 129;
+            --s-600: 4 120 87;    /* #047857 */ --s-700: 6 95 70;     /* #065F46 */ --s-800: 6 78 59; --s-900: 4 47 46;
+            --d-50: 254 242 242; --d-100: 254 226 226; --d-200: 254 202 202; --d-300: 252 165 165; --d-400: 248 113 113; --d-500: 239 68 68;
+            --d-600: 185 28 28;   /* #B91C1C */ --d-700: 153 27 27;   /* #991B1B */ --d-800: 127 29 29; --d-900: 105 24 24;
+            --w-50: 255 251 235; --w-100: 254 243 199; --w-200: 253 230 138; --w-300: 252 211 77; --w-400: 251 191 36; --w-500: 245 158 11;
+            --w-600: 180 83 9;    /* #B45309 */ --w-700: 146 64 14;   /* #92400E */ --w-800: 120 53 15; --w-900: 105 47 13;
+        }
+        .dark {
+            /* DARK THEME — dark navy/slate + blue accent */
+            color-scheme: dark;
+            --n-ink: 248 250 252;     /* #F8FAFC */
+            --n-inksoft: 203 213 225;
+            --n-inkmuted: 148 163 184;/* #94A3B8 */
+            --n-canvas: 15 23 42;     /* #0F172A background */
+            --n-paper: 30 41 59;      /* #1E293B surface */
+            --n-rule: 51 65 85;       /* #334155 border */
+            --n-rulesoft: 39 52 73;
+            --n-rowsep: 51 65 85;     /* #334155 pemisah baris tabel — sedikit lebih tegas */
+            --n-cream2: 39 52 73;     /* #273449 surface secondary */
+            --n-overlay: 0 0 0;
+            --n-btn: 51 65 85;
+            --n-btnh: 71 85 105;
+            --n-shadow: 0 0 0;
+            --c-ticket: #334155;
+            --p-50: 30 58 138;  /* #1E3A8A primary light */ --p-100: 30 64 175; --p-200: 30 64 175; --p-300: 96 165 250; --p-400: 96 165 250; --p-500: 59 130 246;  /* #3B82F6 primary */
+            --p-600: 59 130 246; --p-700: 96 165 250;  /* #60A5FA hover */ --p-800: 147 197 253; --p-900: 191 219 254;
+            --s-50: 6 78 59;    /* #064E3B success light */ --s-100: 6 95 70; --s-200: 4 120 87; --s-300: 16 185 129; --s-400: 52 211 153; --s-500: 52 211 153;
+            --s-600: 52 211 153;  /* #34D399 success */ --s-700: 110 231 183; --s-800: 110 231 183; --s-900: 167 243 208;
+            --d-50: 127 29 29;  /* #7F1D1D danger light */ --d-100: 153 27 27; --d-200: 153 27 27; --d-300: 248 113 113; --d-400: 248 113 113; --d-500: 248 113 113;
+            --d-600: 239 68 68;   /* #F87171 danger */ --d-700: 252 165 165; --d-800: 252 165 165; --d-900: 254 202 202;
+            --w-50: 120 53 15;  /* #78350F warning light */ --w-100: 120 53 15; --w-200: 146 64 14; --w-300: 251 191 36; --w-400: 251 191 36; --w-500: 251 191 36;
+            --w-600: 217 119 6; --w-700: 251 191 36;  /* #FBBF24 warning */ --w-800: 252 211 77; --w-900: 253 230 138;
+        }
+        [x-cloak] { display: none !important; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        .tnum { font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1; }
+        .ticket-dash { background-image: repeating-linear-gradient(to right, var(--c-ticket) 0, var(--c-ticket) 5px, transparent 5px, transparent 10px); }
+    </style>
+    </head>
+<body class="bg-canvas text-ink font-sans antialiased" x-data="{ sidebarOpen: false }">
+
+    <!-- Overlay mobile -->
+    <div x-show="sidebarOpen"
+         x-transition.opacity.duration.200ms
+         class="fixed inset-0 z-40 bg-overlay/30 lg:hidden"
+         @click="sidebarOpen = false"
+         x-cloak></div>
+
+    <!-- Sidebar -->
+    <!-- Sidebar KASIRO — putih bersih, item aktif = pill biru lembut -->
+<aside class="fixed top-0 left-0 z-50 h-full w-60 bg-paper border-r border-rule flex flex-col transform transition-transform duration-200 lg:translate-x-0"
+       :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+       x-cloak>
+
+    <!-- Brand -->
+    <div class="flex items-center gap-3 px-5 h-14 border-b border-rulesoft shrink-0">
+        
+        <img src="http://127.0.0.1:8899/images/logo-dark.png" alt="Logo Kasiro" class="h-8 w-auto dark:hidden shrink-0">
+        <img src="http://127.0.0.1:8899/images/logo-light.png" alt="Logo Kasiro" class="h-8 w-auto hidden dark:block shrink-0">
+        <div class="min-w-0">
+            <p class="text-[15px] font-bold tracking-[0.08em] text-ink leading-none">KASIRO</p>
+            <p class="text-[10px] text-inkmuted mt-1 leading-none">POS Warung Makan</p>
+        </div>
+        <button @click="sidebarOpen = false" class="ml-auto lg:hidden text-inkmuted hover:text-ink p-1">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Navigasi -->
+    <nav class="flex-1 overflow-y-auto scrollbar-hide px-3 py-4 space-y-5">
+        
+                <div>
+                        <div class="space-y-0.5">
+                                <a href="/admin/dashboard"
+                   class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-150 text-inksoft hover:text-ink hover:bg-cream2">
+                    <svg class="w-4 h-4 shrink-0 text-inkmuted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+                    </svg>
+                    Dashboard
+                </a>
+                            </div>
+        </div>
+                <div>
+                        <p class="px-3 mb-1.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-inkmuted/70">Manajemen</p>
+                        <div class="space-y-0.5">
+                                <a href="/admin/menu"
+                   class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-150 text-inksoft hover:text-ink hover:bg-cream2">
+                    <svg class="w-4 h-4 shrink-0 text-inkmuted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
+                    </svg>
+                    Menu
+                </a>
+                                <a href="/admin/kategori"
+                   class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-150 bg-primary-50 text-primary-700">
+                    <svg class="w-4 h-4 shrink-0 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                    </svg>
+                    Kategori
+                </a>
+                                <a href="/admin/kasir"
+                   class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-150 text-inksoft hover:text-ink hover:bg-cream2">
+                    <svg class="w-4 h-4 shrink-0 text-inkmuted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+                    </svg>
+                    Akun Kasir
+                </a>
+                            </div>
+        </div>
+                <div>
+                        <p class="px-3 mb-1.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-inkmuted/70">Keuangan</p>
+                        <div class="space-y-0.5">
+                                <a href="/admin/pengeluaran"
+                   class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-150 text-inksoft hover:text-ink hover:bg-cream2">
+                    <svg class="w-4 h-4 shrink-0 text-inkmuted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                    </svg>
+                    Pengeluaran
+                </a>
+                                <a href="/admin/laporan"
+                   class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-150 text-inksoft hover:text-ink hover:bg-cream2">
+                    <svg class="w-4 h-4 shrink-0 text-inkmuted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                    </svg>
+                    Laporan
+                </a>
+                                <a href="/admin/riwayat"
+                   class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-150 text-inksoft hover:text-ink hover:bg-cream2">
+                    <svg class="w-4 h-4 shrink-0 text-inkmuted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    Riwayat Transaksi
+                </a>
+                            </div>
+        </div>
+            </nav>
+
+    <!-- User -->
+    <div class="shrink-0 px-3 py-3 border-t border-rulesoft">
+        <div class="flex items-center gap-3 px-2 py-1.5">
+            <div class="w-8 h-8 rounded-lg bg-primary-50 text-primary-700 border border-primary-100 flex items-center justify-center text-xs font-bold shrink-0">A</div>
+            <div class="min-w-0 flex-1">
+                <p class="text-[13px] font-medium text-ink truncate leading-tight">Administrator</p>
+                <p class="text-[11px] text-inkmuted leading-none mt-1">Pemilik</p>
+            </div>
+            <form action="http://127.0.0.1:8899/logout" method="POST" class="contents">
+                <input type="hidden" name="_token" value="ko4bIhDeLgJZlk6VJVhzWxxpbnWQSaE7DGSBq5v4" autocomplete="off">                <button type="submit" title="Keluar" class="p-1.5 text-inkmuted hover:text-danger-600 transition-colors rounded-md hover:bg-danger-50">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                    </svg>
+                </button>
+            </form>
+        </div>
+    </div>
+</aside>
+    <!-- Wrapper utama -->
+    <div class="lg:pl-60 min-h-screen flex flex-col">
+
+        <!-- Topbar -->
+        <header class="h-14 sticky top-0 z-30 bg-paper/90 backdrop-blur border-b border-rule flex items-center gap-3 px-4 sm:px-6 lg:px-8">
+    <!-- Hamburger (mobile) -->
+    <button @click="sidebarOpen = true" class="lg:hidden p-1.5 -ml-1.5 text-inksoft hover:text-ink rounded-md hover:bg-cream2 transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+    </button>
+
+    <!-- Brand kecil (mobile, saat sidebar tersembunyi) -->
+    <span class="lg:hidden text-sm font-bold tracking-[0.08em] text-ink">KASIRO</span>
+
+    <!-- Judul halaman -->
+    <div class="flex items-baseline gap-2.5 min-w-0">
+        <h1 class="text-[15px] font-semibold text-ink truncate">Kategori</h1>
+        <span class="hidden md:inline text-xs text-inkmuted whitespace-nowrap">Senin, 14 September 2026</span>
+    </div>
+
+    <div class="ml-auto flex items-center gap-1.5">
+        <!-- Theme toggle -->
+        <button @click="dark = !dark; localStorage.setItem('kasiro-theme', dark ? 'dark' : 'light'); document.documentElement.classList.toggle('dark', dark)"
+                x-data="{ dark: document.documentElement.classList.contains('dark') }"
+                class="p-2 rounded-md text-inksoft hover:text-ink hover:bg-cream2 transition-colors" title="Ganti tema">
+            <svg x-show="!dark" class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+            </svg>
+            <svg x-show="dark" class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" x-cloak>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+            </svg>
+        </button>
+
+        <!-- Notifikasi -->
+                <div class="relative" x-data="{ notifOpen: false }">
+            <button @click="notifOpen = !notifOpen" class="relative p-2 rounded-md text-inksoft hover:text-ink hover:bg-cream2 transition-colors">
+                <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                </svg>
+                                <span class="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-danger-500 rounded-full"></span>
+                            </button>
+
+            <div x-show="notifOpen" @click.away="notifOpen = false" x-transition.opacity.duration.150ms x-cloak
+                 class="absolute right-0 mt-2 w-72 bg-paper border border-rule rounded-xl shadow-pop py-1.5 z-50">
+                <p class="px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-inkmuted">Notifikasi</p>
+                                    <a href="http://127.0.0.1:8899/admin/laporan" class="block px-4 py-2.5 hover:bg-cream2">
+                        <p class="text-[13px] text-ink">Laporan mingguan siap dilihat</p>
+                        <p class="text-[11px] text-inkmuted mt-0.5">Kemarin, 18:00</p>
+                    </a>
+                            </div>
+        </div>
+
+        <span class="w-px h-5 bg-rulesoft mx-1"></span>
+
+        <!-- Profil -->
+        <div class="relative" x-data="{ profileOpen: false }">
+            <button @click="profileOpen = !profileOpen" class="flex items-center gap-2 p-1.5 rounded-md hover:bg-cream2 transition-colors">
+                <div class="w-7 h-7 rounded-lg bg-primary-600 text-white flex items-center justify-center text-xs font-bold">A</div>
+                <div class="hidden sm:block text-left leading-tight">
+                    <p class="text-[13px] font-medium text-ink">Administrator</p>
+                </div>
+                <svg class="w-3.5 h-3.5 text-inkmuted hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+            </button>
+
+            <div x-show="profileOpen" @click.away="profileOpen = false" x-transition.opacity.duration.150ms x-cloak
+                 class="absolute right-0 mt-2 w-44 bg-paper border border-rule rounded-xl shadow-pop py-1 z-50">
+                <a href="/profile" class="block px-4 py-2 text-[13px] text-ink hover:bg-cream2">Profil Saya</a>
+                <div class="border-t border-rulesoft mt-1 pt-1">
+                    <form action="http://127.0.0.1:8899/logout" method="POST">
+                        <input type="hidden" name="_token" value="ko4bIhDeLgJZlk6VJVhzWxxpbnWQSaE7DGSBq5v4" autocomplete="off">                        <button type="submit" class="block w-full text-left px-4 py-2 text-[13px] text-danger-600 hover:bg-danger-50">Keluar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+        <!-- Konten -->
+        <main class="flex-1 px-4 sm:px-6 lg:px-8 py-5 lg:py-6">
+            <div x-data="kategoriApp({ errors: false, mode: 'add', id: null, name: '', status: 'Aktif' })">
+
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+            <h1 class="text-lg font-bold text-ink">Kategori Menu</h1>
+            <p class="text-[13px] text-inkmuted mt-0.5">2 kategori — 12 menu total</p>
+        </div>
+        <button @click="openAddModal()" class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-primary-600 hover:bg-primary-700 text-white text-[13px] font-semibold rounded-lg shadow-card transition-colors duration-150">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            Tambah Kategori
+        </button>
+    </div>
+
+    <!-- Flash sukses / error -->
+        
+    <!-- Search -->
+    <div class="relative max-w-xs mt-5">
+        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-inkmuted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+        <input type="text" x-model="search" placeholder="Cari kategori…"
+               class="w-full pl-9 pr-3 py-2 rounded-lg border border-rule bg-paper text-sm placeholder:text-inkmuted/70 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-100 transition-colors duration-150">
+    </div>
+
+    <!-- Daftar kategori: baris compact di kartu -->
+    <div class="mt-4 bg-paper border border-rule rounded-xl shadow-card overflow-hidden">
+        <div class="divide-y divide-rowsep">
+                            <div class="flex items-center gap-4 px-5 py-3.5 group hover:bg-cream2/60 transition-colors duration-150"
+                     x-show="'makanan'.includes(search.toLowerCase())">
+                    <span class="w-6 h-6 rounded-md bg-cream2 text-inkmuted text-[11px] font-bold flex items-center justify-center shrink-0">1</span>
+                    <div class="min-w-0 flex-1">
+                        <p class="text-[14px] font-medium text-ink">Makanan</p>
+                        <p class="text-[12px] text-inkmuted mt-0.5">6 menu · dibuat 13 Sep 2026</p>
+                    </div>
+                    <span class="inline-flex items-center gap-1.5 text-[12px] shrink-0 text-success-600">
+                        <span class="w-1.5 h-1.5 rounded-full bg-success-500"></span>
+                        Aktif
+                    </span>
+                    <div class="flex items-center gap-3 shrink-0 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-150">
+                        <button @click="openEditModal({ id: 1, name: 'Makanan', status: 'Aktif' })"
+                                class="text-[12px] text-inksoft hover:text-primary-600 font-medium">Edit</button>
+                        <button @click="openDeleteModal({ id: 1, name: 'Makanan', count: 6 })"
+                                class="text-[12px] text-inksoft hover:text-danger-600 font-medium">Hapus</button>
+                    </div>
+                </div>
+                            <div class="flex items-center gap-4 px-5 py-3.5 group hover:bg-cream2/60 transition-colors duration-150"
+                     x-show="'minuman'.includes(search.toLowerCase())">
+                    <span class="w-6 h-6 rounded-md bg-cream2 text-inkmuted text-[11px] font-bold flex items-center justify-center shrink-0">2</span>
+                    <div class="min-w-0 flex-1">
+                        <p class="text-[14px] font-medium text-ink">Minuman</p>
+                        <p class="text-[12px] text-inkmuted mt-0.5">6 menu · dibuat 13 Sep 2026</p>
+                    </div>
+                    <span class="inline-flex items-center gap-1.5 text-[12px] shrink-0 text-success-600">
+                        <span class="w-1.5 h-1.5 rounded-full bg-success-500"></span>
+                        Aktif
+                    </span>
+                    <div class="flex items-center gap-3 shrink-0 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-150">
+                        <button @click="openEditModal({ id: 2, name: 'Minuman', status: 'Aktif' })"
+                                class="text-[12px] text-inksoft hover:text-primary-600 font-medium">Edit</button>
+                        <button @click="openDeleteModal({ id: 2, name: 'Minuman', count: 6 })"
+                                class="text-[12px] text-inksoft hover:text-danger-600 font-medium">Hapus</button>
+                    </div>
+                </div>
+                    </div>
+
+        <!-- Empty state pencarian -->
+        <div x-show="noResults()" x-cloak class="py-14 text-center">
+            <p class="text-sm text-inkmuted">Tidak ada kategori yang cocok.</p>
+        </div>
+    </div>
+
+    <!-- Modal: Tambah / Edit -->
+    <div x-show="showModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4" x-transition.opacity.duration.150ms>
+        <div class="absolute inset-0 bg-ink/40" @click="showModal = false"></div>
+        <div class="relative bg-paper rounded-2xl shadow-pop border border-rule max-w-md w-full overflow-hidden" x-transition.scale.duration.150ms>
+            <div class="px-5 py-3.5 border-b border-rulesoft flex items-center justify-between">
+                <h3 class="text-[15px] font-semibold text-ink" x-text="modalMode === 'add' ? 'Tambah Kategori' : 'Edit Kategori'"></h3>
+                <button @click="showModal = false" class="text-inkmuted hover:text-ink p-1 rounded-md hover:bg-cream2 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Form Tambah -->
+            <form x-show="modalMode === 'add'" x-cloak action="http://127.0.0.1:8899/admin/kategori" method="POST" class="contents">
+                <input type="hidden" name="_token" value="ko4bIhDeLgJZlk6VJVhzWxxpbnWQSaE7DGSBq5v4" autocomplete="off">                <input type="hidden" name="_form_mode" value="add">
+                <div class="px-5 py-4 space-y-4">
+                    <div>
+                        <label class="block text-[13px] font-medium text-ink mb-1.5">Nama Kategori <span class="text-danger-500">*</span></label>
+                        <input type="text" name="name" x-model="form.name" placeholder="Contoh: Snack"
+                               class="w-full px-3 py-2 rounded-lg border border-rule bg-paper text-sm focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-100 transition-colors duration-150">
+                                            </div>
+                    <div>
+                        <label class="block text-[13px] font-medium text-ink mb-1.5">Status</label>
+                        <select name="status" x-model="form.status" class="w-full px-3 py-2 rounded-lg border border-rule bg-paper text-sm focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-100 transition-colors duration-150">
+                            <option value="Aktif">Aktif</option>
+                            <option value="Nonaktif">Nonaktif</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="px-5 py-3.5 border-t border-rulesoft flex items-center justify-end gap-2.5 bg-canvas/60">
+                    <button type="button" @click="showModal = false" class="px-4 py-2 rounded-lg border border-rule bg-paper text-ink text-[13px] font-medium hover:bg-cream2 transition-colors duration-150">Batal</button>
+                    <button type="submit" class="px-4 py-2 rounded-lg bg-primary-600 hover:bg-primary-700 text-white text-[13px] font-semibold transition-colors duration-150">Simpan</button>
+                </div>
+            </form>
+
+            <!-- Form Edit -->
+            <form x-show="modalMode === 'edit'" x-cloak :action="'http://127.0.0.1:8899/admin/kategori/' + editId" method="POST" class="contents">
+                <input type="hidden" name="_token" value="ko4bIhDeLgJZlk6VJVhzWxxpbnWQSaE7DGSBq5v4" autocomplete="off">                <input type="hidden" name="_method" value="PUT">                <input type="hidden" name="_form_mode" value="edit">
+                <input type="hidden" name="id" :value="editId">
+                <div class="px-5 py-4 space-y-4">
+                    <div>
+                        <label class="block text-[13px] font-medium text-ink mb-1.5">Nama Kategori <span class="text-danger-500">*</span></label>
+                        <input type="text" name="name" x-model="form.name"
+                               class="w-full px-3 py-2 rounded-lg border border-rule bg-paper text-sm focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-100 transition-colors duration-150">
+                                                <p class="text-[11px] text-inkmuted mt-1">Mengubah nama akan mengikuti-sertakan semua menu yang memakai kategori ini.</p>
+                    </div>
+                    <div>
+                        <label class="block text-[13px] font-medium text-ink mb-1.5">Status</label>
+                        <select name="status" x-model="form.status" class="w-full px-3 py-2 rounded-lg border border-rule bg-paper text-sm focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-100 transition-colors duration-150">
+                            <option value="Aktif">Aktif</option>
+                            <option value="Nonaktif">Nonaktif</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="px-5 py-3.5 border-t border-rulesoft flex items-center justify-end gap-2.5 bg-canvas/60">
+                    <button type="button" @click="showModal = false" class="px-4 py-2 rounded-lg border border-rule bg-paper text-ink text-[13px] font-medium hover:bg-cream2 transition-colors duration-150">Batal</button>
+                    <button type="submit" class="px-4 py-2 rounded-lg bg-primary-600 hover:bg-primary-700 text-white text-[13px] font-semibold transition-colors duration-150">Perbarui</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Hapus -->
+    <div x-show="showDeleteModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4" x-transition.opacity.duration.150ms>
+        <div class="absolute inset-0 bg-ink/40" @click="showDeleteModal = false"></div>
+        <div class="relative bg-paper rounded-2xl shadow-pop border border-rule max-w-sm w-full p-6 text-center" x-transition.scale.duration.150ms>
+            <h3 class="text-[15px] font-bold text-ink">Hapus kategori ini?</h3>
+            <p class="text-[13px] text-inksoft mt-2">
+                <template x-if="deleteItem && deleteItem.count > 0">
+                    <span>Kategori "<span x-text="deleteItem?.name"></span>" masih dipakai <span x-text="deleteItem?.count"></span> menu — hapus atau pindahkan menu-nya dulu.</span>
+                </template>
+                <template x-if="deleteItem && deleteItem.count === 0">
+                    <span>Kategori "<span x-text="deleteItem?.name"></span>" akan dihapus permanen.</span>
+                </template>
+            </p>
+            <form :action="'http://127.0.0.1:8899/admin/kategori/' + (deleteItem?.id ?? 0)" method="POST" class="mt-5 flex items-center justify-center gap-2.5">
+                <input type="hidden" name="_token" value="ko4bIhDeLgJZlk6VJVhzWxxpbnWQSaE7DGSBq5v4" autocomplete="off">                <input type="hidden" name="_method" value="DELETE">                <button type="button" @click="showDeleteModal = false" class="px-4 py-2 rounded-lg border border-rule bg-paper text-ink text-[13px] font-medium hover:bg-cream2 transition-colors duration-150">Batal</button>
+                <button type="submit" x-show="deleteItem && deleteItem.count === 0" x-cloak
+                        class="px-4 py-2 rounded-lg bg-danger-600 hover:bg-danger-700 text-white text-[13px] font-semibold transition-colors duration-150">Ya, Hapus</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+        </main>
+
+        <footer class="px-4 sm:px-6 lg:px-8 pb-5">
+            <p class="text-[11px] text-inkmuted/80">&copy; 2026 Kasiro — POS Warung Makan UMKM</p>
+        </footer>
+    </div>
+
+    <script>
+function kategoriApp(init) {
+    return {
+        search: '',
+        showModal: init.errors === true,
+        showDeleteModal: false,
+        modalMode: init.mode === 'edit' ? 'edit' : 'add',
+        deleteItem: null,
+        editId: init.id ?? null,
+        form: { name: init.name ?? '', status: init.status ?? 'Aktif' },
+        openAddModal() {
+            this.modalMode = 'add';
+            this.form = { name: '', status: 'Aktif' };
+            this.showModal = true;
+        },
+        openEditModal(item) {
+            this.modalMode = 'edit';
+            this.editId = item.id;
+            this.form = { name: item.name, status: item.status };
+            this.showModal = true;
+        },
+        openDeleteModal(item) {
+            this.deleteItem = item;
+            this.showDeleteModal = true;
+        },
+        noResults() {
+            const rows = document.querySelectorAll('div.divide-y > div[x-show]');
+            if (!rows.length) return false;
+            return Array.from(rows).every(row => getComputedStyle(row).display === 'none');
+        }
+    }
+}
+</script>
+</body>
+</html>

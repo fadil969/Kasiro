@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="iJzcYyGOOQBUV3yC72yaTUNNSHwzu1lLb22z0OXG">
+    <title>Transaksi Baru — POS Warung Makan</title>
+    <script>try{if(localStorage.getItem('kasiro-theme')==='dark')document.documentElement.classList.add('dark')}catch(e){}</script>
+    <link rel="icon" type="image/png" href="http://127.0.0.1:8899/images/favicon.png">
+    <link rel="shortcut icon" href="http://127.0.0.1:8899/favicon.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        // Seluruh teks (huruf maupun angka) memakai DM Sans
+                        sans: ['"DM Sans"', 'system-ui', 'sans-serif'],
+                        mono: ['"DM Sans"', 'ui-monospace', 'monospace'],
+                    },
+                    colors: {
+                        // Netral semantik (di-drive CSS variable → light/dark)
+                        ink:      'rgb(var(--n-ink) / <alpha-value>)',
+                        inksoft:  'rgb(var(--n-inksoft) / <alpha-value>)',
+                        inkmuted: 'rgb(var(--n-inkmuted) / <alpha-value>)',
+                        canvas:   'rgb(var(--n-canvas) / <alpha-value>)',
+                        paper:    'rgb(var(--n-paper) / <alpha-value>)',
+                        rule:     'rgb(var(--n-rule) / <alpha-value>)',
+                        rulesoft: 'rgb(var(--n-rulesoft) / <alpha-value>)',
+                        // Pemisah baris tabel — sedikit lebih tegas dari rulesoft
+                        rowsep:   'rgb(var(--n-rowsep) / <alpha-value>)',
+                        overlay:  'rgb(var(--n-overlay) / <alpha-value>)',
+                        btn:      'rgb(var(--n-btn) / <alpha-value>)',
+                        btnh:     'rgb(var(--n-btnh) / <alpha-value>)',
+                        // Alias kompatibilitas
+                        cream:    'rgb(var(--n-canvas) / <alpha-value>)',
+                        cream2:   'rgb(var(--n-cream2) / <alpha-value>)',
+                        // Aksen utama — primary blue
+                        primary: {50:'rgb(var(--p-50) / <alpha-value>)',100:'rgb(var(--p-100) / <alpha-value>)',200:'rgb(var(--p-200) / <alpha-value>)',300:'rgb(var(--p-300) / <alpha-value>)',400:'rgb(var(--p-400) / <alpha-value>)',500:'rgb(var(--p-500) / <alpha-value>)',600:'rgb(var(--p-600) / <alpha-value>)',700:'rgb(var(--p-700) / <alpha-value>)',800:'rgb(var(--p-800) / <alpha-value>)',900:'rgb(var(--p-900) / <alpha-value>)'},
+                        // Status
+                        success: {50:'rgb(var(--s-50) / <alpha-value>)',100:'rgb(var(--s-100) / <alpha-value>)',200:'rgb(var(--s-200) / <alpha-value>)',300:'rgb(var(--s-300) / <alpha-value>)',400:'rgb(var(--s-400) / <alpha-value>)',500:'rgb(var(--s-500) / <alpha-value>)',600:'rgb(var(--s-600) / <alpha-value>)',700:'rgb(var(--s-700) / <alpha-value>)',800:'rgb(var(--s-800) / <alpha-value>)',900:'rgb(var(--s-900) / <alpha-value>)'},
+                        danger:  {50:'rgb(var(--d-50) / <alpha-value>)',100:'rgb(var(--d-100) / <alpha-value>)',200:'rgb(var(--d-200) / <alpha-value>)',300:'rgb(var(--d-300) / <alpha-value>)',400:'rgb(var(--d-400) / <alpha-value>)',500:'rgb(var(--d-500) / <alpha-value>)',600:'rgb(var(--d-600) / <alpha-value>)',700:'rgb(var(--d-700) / <alpha-value>)',800:'rgb(var(--d-800) / <alpha-value>)',900:'rgb(var(--d-900) / <alpha-value>)'},
+                        warning: {50:'rgb(var(--w-50) / <alpha-value>)',100:'rgb(var(--w-100) / <alpha-value>)',200:'rgb(var(--w-200) / <alpha-value>)',300:'rgb(var(--w-300) / <alpha-value>)',400:'rgb(var(--w-400) / <alpha-value>)',500:'rgb(var(--w-500) / <alpha-value>)',600:'rgb(var(--w-600) / <alpha-value>)',700:'rgb(var(--w-700) / <alpha-value>)',800:'rgb(var(--w-800) / <alpha-value>)',900:'rgb(var(--w-900) / <alpha-value>)'},
+                    },
+                    boxShadow: {
+                        'card': '0 1px 2px 0 rgb(var(--n-shadow) / 0.05)',
+                        'pop':  '0 8px 24px -8px rgb(var(--n-shadow) / 0.35)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            /* LIGHT THEME — latar terang, maka foreground dibuat lebih gelap
+               agar semua teks & diagram kontras dan mudah dibaca */
+            --n-ink: 2 6 23;          /* #020617 teks utama */
+            --n-inksoft: 51 65 85;    /* #334155 */
+            --n-inkmuted: 71 85 105;  /* #475569 */
+            --n-canvas: 248 250 252;  /* #F8FAFC background */
+            --n-paper: 255 255 255;   /* #FFFFFF surface */
+            --n-rule: 203 213 225;    /* #CBD5E1 border */
+            --n-rulesoft: 226 232 240;/* #E2E8F0 */
+            --n-rowsep: 203 213 225;  /* #CBD5E1 pemisah baris tabel — sedikit lebih tegas */
+            --n-cream2: 241 245 249;  /* hover surface */
+            --n-overlay: 15 23 42;
+            --n-btn: 15 23 42;
+            --n-btnh: 51 65 85;
+            --n-shadow: 15 23 42;
+            --c-ticket: #CBD5E1;
+            --p-50: 239 246 255; --p-100: 219 234 254; --p-200: 191 219 254; --p-300: 147 197 253; --p-400: 96 165 250; --p-500: 37 99 235;  /* #2563EB */
+            --p-600: 29 78 216;   /* #1D4ED8 primary — biru gelap */ --p-700: 30 64 175;   /* #1E40AF hover */
+            --p-800: 30 58 138;   /* #1E3A8A */ --p-900: 23 37 84;   /* #172554 */
+            --s-50: 236 253 245; --s-100: 209 250 229; --s-200: 167 243 208; --s-300: 110 231 183; --s-400: 52 211 153; --s-500: 16 185 129;
+            --s-600: 4 120 87;    /* #047857 */ --s-700: 6 95 70;     /* #065F46 */ --s-800: 6 78 59; --s-900: 4 47 46;
+            --d-50: 254 242 242; --d-100: 254 226 226; --d-200: 254 202 202; --d-300: 252 165 165; --d-400: 248 113 113; --d-500: 239 68 68;
+            --d-600: 185 28 28;   /* #B91C1C */ --d-700: 153 27 27;   /* #991B1B */ --d-800: 127 29 29; --d-900: 105 24 24;
+            --w-50: 255 251 235; --w-100: 254 243 199; --w-200: 253 230 138; --w-300: 252 211 77; --w-400: 251 191 36; --w-500: 245 158 11;
+            --w-600: 180 83 9;    /* #B45309 */ --w-700: 146 64 14;   /* #92400E */ --w-800: 120 53 15; --w-900: 105 47 13;
+        }
+        .dark {
+            /* DARK THEME — dark navy/slate + blue accent */
+            color-scheme: dark;
+            --n-ink: 248 250 252;     /* #F8FAFC */
+            --n-inksoft: 203 213 225;
+            --n-inkmuted: 148 163 184;/* #94A3B8 */
+            --n-canvas: 15 23 42;     /* #0F172A background */
+            --n-paper: 30 41 59;      /* #1E293B surface */
+            --n-rule: 51 65 85;       /* #334155 border */
+            --n-rulesoft: 39 52 73;
+            --n-rowsep: 51 65 85;     /* #334155 pemisah baris tabel — sedikit lebih tegas */
+            --n-cream2: 39 52 73;     /* #273449 surface secondary */
+            --n-overlay: 0 0 0;
+            --n-btn: 51 65 85;
+            --n-btnh: 71 85 105;
+            --n-shadow: 0 0 0;
+            --c-ticket: #334155;
+            --p-50: 30 58 138;  /* #1E3A8A primary light */ --p-100: 30 64 175; --p-200: 30 64 175; --p-300: 96 165 250; --p-400: 96 165 250; --p-500: 59 130 246;  /* #3B82F6 primary */
+            --p-600: 59 130 246; --p-700: 96 165 250;  /* #60A5FA hover */ --p-800: 147 197 253; --p-900: 191 219 254;
+            --s-50: 6 78 59;    /* #064E3B success light */ --s-100: 6 95 70; --s-200: 4 120 87; --s-300: 16 185 129; --s-400: 52 211 153; --s-500: 52 211 153;
+            --s-600: 52 211 153;  /* #34D399 success */ --s-700: 110 231 183; --s-800: 110 231 183; --s-900: 167 243 208;
+            --d-50: 127 29 29;  /* #7F1D1D danger light */ --d-100: 153 27 27; --d-200: 153 27 27; --d-300: 248 113 113; --d-400: 248 113 113; --d-500: 248 113 113;
+            --d-600: 239 68 68;   /* #F87171 danger */ --d-700: 252 165 165; --d-800: 252 165 165; --d-900: 254 202 202;
+            --w-50: 120 53 15;  /* #78350F warning light */ --w-100: 120 53 15; --w-200: 146 64 14; --w-300: 251 191 36; --w-400: 251 191 36; --w-500: 251 191 36;
+            --w-600: 217 119 6; --w-700: 251 191 36;  /* #FBBF24 warning */ --w-800: 252 211 77; --w-900: 253 230 138;
+        }
+        [x-cloak] { display: none !important; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        .tnum { font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1; }
+        .ticket-dash { background-image: repeating-linear-gradient(to right, var(--c-ticket) 0, var(--c-ticket) 5px, transparent 5px, transparent 10px); }
+    </style>
+    </head>
+<body class="bg-canvas text-ink font-sans antialiased" x-data="{ sidebarOpen: false }">
+
+    <!-- Overlay mobile -->
+    <div x-show="sidebarOpen"
+         x-transition.opacity.duration.200ms
+         class="fixed inset-0 z-40 bg-overlay/30 lg:hidden"
+         @click="sidebarOpen = false"
+         x-cloak></div>
+
+    <!-- Sidebar -->
+    <!-- Sidebar KASIRO — putih bersih, item aktif = pill biru lembut -->
+<aside class="fixed top-0 left-0 z-50 h-full w-60 bg-paper border-r border-rule flex flex-col transform transition-transform duration-200 lg:translate-x-0"
+       :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+       x-cloak>
+
+    <!-- Brand -->
+    <div class="flex items-center gap-3 px-5 h-14 border-b border-rulesoft shrink-0">
+        
+        <img src="http://127.0.0.1:8899/images/logo-dark.png" alt="Logo Kasiro" class="h-8 w-auto dark:hidden shrink-0">
+        <img src="http://127.0.0.1:8899/images/logo-light.png" alt="Logo Kasiro" class="h-8 w-auto hidden dark:block shrink-0">
+        <div class="min-w-0">
+            <p class="text-[15px] font-bold tracking-[0.08em] text-ink leading-none">KASIRO</p>
+            <p class="text-[10px] text-inkmuted mt-1 leading-none">POS Warung Makan</p>
+        </div>
+        <button @click="sidebarOpen = false" class="ml-auto lg:hidden text-inkmuted hover:text-ink p-1">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Navigasi -->
+    <nav class="flex-1 overflow-y-auto scrollbar-hide px-3 py-4 space-y-5">
+        
+                <div>
+                        <div class="space-y-0.5">
+                                <a href="/kasir/transaksi"
+                   class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-150 bg-primary-50 text-primary-700">
+                    <svg class="w-4 h-4 shrink-0 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    Transaksi Baru
+                </a>
+                            </div>
+        </div>
+                <div>
+                        <p class="px-3 mb-1.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-inkmuted/70">Operasional</p>
+                        <div class="space-y-0.5">
+                                <a href="/kasir/riwayat"
+                   class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-150 text-inksoft hover:text-ink hover:bg-cream2">
+                    <svg class="w-4 h-4 shrink-0 text-inkmuted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    Riwayat Saya
+                </a>
+                            </div>
+        </div>
+            </nav>
+
+    <!-- User -->
+    <div class="shrink-0 px-3 py-3 border-t border-rulesoft">
+        <div class="flex items-center gap-3 px-2 py-1.5">
+            <div class="w-8 h-8 rounded-lg bg-primary-50 text-primary-700 border border-primary-100 flex items-center justify-center text-xs font-bold shrink-0">K</div>
+            <div class="min-w-0 flex-1">
+                <p class="text-[13px] font-medium text-ink truncate leading-tight">Kasir Satu</p>
+                <p class="text-[11px] text-inkmuted leading-none mt-1">Kasir</p>
+            </div>
+            <form action="http://127.0.0.1:8899/logout" method="POST" class="contents">
+                <input type="hidden" name="_token" value="iJzcYyGOOQBUV3yC72yaTUNNSHwzu1lLb22z0OXG" autocomplete="off">                <button type="submit" title="Keluar" class="p-1.5 text-inkmuted hover:text-danger-600 transition-colors rounded-md hover:bg-danger-50">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                    </svg>
+                </button>
+            </form>
+        </div>
+    </div>
+</aside>
+    <!-- Wrapper utama -->
+    <div class="lg:pl-60 min-h-screen flex flex-col">
+
+        <!-- Topbar -->
+        <header class="h-14 sticky top-0 z-30 bg-paper/90 backdrop-blur border-b border-rule flex items-center gap-3 px-4 sm:px-6 lg:px-8">
+    <!-- Hamburger (mobile) -->
+    <button @click="sidebarOpen = true" class="lg:hidden p-1.5 -ml-1.5 text-inksoft hover:text-ink rounded-md hover:bg-cream2 transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+    </button>
+
+    <!-- Brand kecil (mobile, saat sidebar tersembunyi) -->
+    <span class="lg:hidden text-sm font-bold tracking-[0.08em] text-ink">KASIRO</span>
+
+    <!-- Judul halaman -->
+    <div class="flex items-baseline gap-2.5 min-w-0">
+        <h1 class="text-[15px] font-semibold text-ink truncate">Transaksi Baru</h1>
+        <span class="hidden md:inline text-xs text-inkmuted whitespace-nowrap">Senin, 14 September 2026</span>
+    </div>
+
+    <div class="ml-auto flex items-center gap-1.5">
+        <!-- Theme toggle -->
+        <button @click="dark = !dark; localStorage.setItem('kasiro-theme', dark ? 'dark' : 'light'); document.documentElement.classList.toggle('dark', dark)"
+                x-data="{ dark: document.documentElement.classList.contains('dark') }"
+                class="p-2 rounded-md text-inksoft hover:text-ink hover:bg-cream2 transition-colors" title="Ganti tema">
+            <svg x-show="!dark" class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+            </svg>
+            <svg x-show="dark" class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" x-cloak>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+            </svg>
+        </button>
+
+        <!-- Notifikasi -->
+                <div class="relative" x-data="{ notifOpen: false }">
+            <button @click="notifOpen = !notifOpen" class="relative p-2 rounded-md text-inksoft hover:text-ink hover:bg-cream2 transition-colors">
+                <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                </svg>
+                            </button>
+
+            <div x-show="notifOpen" @click.away="notifOpen = false" x-transition.opacity.duration.150ms x-cloak
+                 class="absolute right-0 mt-2 w-72 bg-paper border border-rule rounded-xl shadow-pop py-1.5 z-50">
+                <p class="px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-inkmuted">Notifikasi</p>
+                                    <p class="px-4 py-3 text-[13px] text-inkmuted">Belum ada notifikasi.</p>
+                            </div>
+        </div>
+
+        <span class="w-px h-5 bg-rulesoft mx-1"></span>
+
+        <!-- Profil -->
+        <div class="relative" x-data="{ profileOpen: false }">
+            <button @click="profileOpen = !profileOpen" class="flex items-center gap-2 p-1.5 rounded-md hover:bg-cream2 transition-colors">
+                <div class="w-7 h-7 rounded-lg bg-primary-600 text-white flex items-center justify-center text-xs font-bold">K</div>
+                <div class="hidden sm:block text-left leading-tight">
+                    <p class="text-[13px] font-medium text-ink">Kasir Satu</p>
+                </div>
+                <svg class="w-3.5 h-3.5 text-inkmuted hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+            </button>
+
+            <div x-show="profileOpen" @click.away="profileOpen = false" x-transition.opacity.duration.150ms x-cloak
+                 class="absolute right-0 mt-2 w-44 bg-paper border border-rule rounded-xl shadow-pop py-1 z-50">
+                <a href="/profile" class="block px-4 py-2 text-[13px] text-ink hover:bg-cream2">Profil Saya</a>
+                <div class="border-t border-rulesoft mt-1 pt-1">
+                    <form action="http://127.0.0.1:8899/logout" method="POST">
+                        <input type="hidden" name="_token" value="iJzcYyGOOQBUV3yC72yaTUNNSHwzu1lLb22z0OXG" autocomplete="off">                        <button type="submit" class="block w-full text-left px-4 py-2 text-[13px] text-danger-600 hover:bg-danger-50">Keluar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+        <!-- Konten -->
+        <main class="flex-1 px-4 sm:px-6 lg:px-8 py-5 lg:py-6">
+            <div class="fixed left-0 right-0 top-14 bottom-0 lg:left-60 flex flex-col lg:flex-row"
+     x-data="posApp()" x-init="init()">
+
+    <!-- ============ AREA MENU (kiri) ============ -->
+    <div class="flex-1 flex flex-col min-w-0 bg-canvas">
+
+        <!-- Search + kategori chip -->
+        <div class="px-4 sm:px-6 py-3.5 border-b border-rule bg-canvas">
+            <div class="flex flex-col sm:flex-row gap-2.5">
+                <div class="relative flex-1">
+                    <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-inkmuted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                    <input type="text" x-model="search" x-ref="search" placeholder="Cari menu… (tekan / untuk fokus)"
+                           class="w-full pl-9 pr-3 py-2.5 rounded-lg border border-rule bg-paper text-sm placeholder:text-inkmuted/70 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-100 transition-colors duration-150">
+                </div>
+                <div class="flex gap-1.5 overflow-x-auto scrollbar-hide">
+                    <button @click="activeCategory = 'all'"
+                            :class="activeCategory === 'all' ? 'bg-primary-600 text-white border-primary-600' : 'bg-paper text-inksoft border-rule hover:border-inkmuted/60'"
+                            class="px-3.5 py-2.5 rounded-lg text-[13px] font-medium border transition-colors duration-150 whitespace-nowrap">Semua</button>
+                                            <button @click="activeCategory = 'makanan'"
+                                :class="activeCategory === 'makanan' ? 'bg-primary-600 text-white border-primary-600' : 'bg-paper text-inksoft border-rule hover:border-inkmuted/60'"
+                                class="px-3.5 py-2.5 rounded-lg text-[13px] font-medium border transition-colors duration-150 whitespace-nowrap">Makanan</button>
+                                            <button @click="activeCategory = 'minuman'"
+                                :class="activeCategory === 'minuman' ? 'bg-primary-600 text-white border-primary-600' : 'bg-paper text-inksoft border-rule hover:border-inkmuted/60'"
+                                class="px-3.5 py-2.5 rounded-lg text-[13px] font-medium border transition-colors duration-150 whitespace-nowrap">Minuman</button>
+                                    </div>
+            </div>
+        </div>
+
+        <!-- Grid menu: tombol besar bersih dengan qty badge -->
+        <div class="flex-1 overflow-y-auto scrollbar-hide px-4 sm:px-6 py-4">
+            <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-2.5 pb-6">
+                <template x-for="item in filteredMenus" :key="item.id">
+                    <button @click="addToCart(item)"
+                            :class="getCartQty(item.id) > 0 ? 'bg-primary-50 border-primary-300 ring-1 ring-primary-400' : 'bg-paper border-rule hover:border-inkmuted/50 hover:shadow-card'"
+                            class="relative text-left rounded-xl border p-3.5 transition-colors duration-150 group">
+                        <div x-show="getCartQty(item.id) > 0" x-cloak x-transition.opacity.duration.150ms
+                             class="absolute top-2.5 right-2.5 min-w-[22px] h-[22px] px-1 rounded-full bg-primary-600 text-white text-[12px] font-mono font-bold flex items-center justify-center"
+                             x-text="getCartQty(item.id)"></div>
+                        
+                        <div class="w-full aspect-[16/10] rounded-lg overflow-hidden bg-canvas border border-rulesoft mb-2.5">
+                            <template x-if="item.image">
+                                <img :src="item.image" :alt="item.name" loading="lazy" class="w-full h-full object-cover">
+                            </template>
+                            <template x-if="!item.image">
+                                <div class="w-full h-full flex items-center justify-center text-inkmuted/40">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    </svg>
+                                </div>
+                            </template>
+                        </div>
+                        
+                        <p class="text-[15px] font-medium text-ink leading-snug pr-6 line-clamp-2 min-h-[2.625rem]" x-text="item.name"></p>
+                        <p class="font-mono text-[13px] text-primary-600 font-semibold tnum mt-1.5" x-text="formatRupiah(item.price)"></p>
+                    </button>
+                </template>
+            </div>
+            <!-- Empty state pencarian -->
+            <div x-show="filteredMenus.length === 0" x-cloak class="py-16 text-center">
+                <p class="text-sm text-inkmuted">Tidak ada menu yang cocok dengan "<span x-text="search"></span>"</p>
+                <button @click="search = ''" class="mt-2 text-[13px] text-primary-600 hover:text-primary-700 font-medium">Bersihkan pencarian</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ NOTA / KERANJANG (kanan) ============ -->
+    <div class="lg:w-[380px] shrink-0 bg-paper flex flex-col border-l border-rule
+                max-lg:h-[55vh] max-lg:border-l-0 max-lg:border-t">
+
+        <!-- Kepala nota -->
+        <div class="px-5 pt-5 pb-4 shrink-0 border-b border-rulesoft">
+            <div class="flex items-baseline justify-between">
+                <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-inkmuted">Nota kasir</p>
+                <button @click="clearCart()" x-show="cart.length > 0" x-cloak
+                        class="text-[12px] text-inkmuted hover:text-danger-600 transition-colors font-medium">Kosongkan</button>
+            </div>
+            <p class="font-mono text-[12px] text-inkmuted mt-1" x-text="nomorNota"></p>
+        </div>
+
+        <!-- Item nota -->
+        <div class="flex-1 overflow-y-auto scrollbar-hide px-5 py-4 min-h-[100px]">
+            <template x-if="cart.length === 0">
+                <div class="h-full flex flex-col items-center justify-center text-center text-inkmuted">
+                    <svg class="w-8 h-8 mb-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 2L4 8v12a2 2 0 002 2h12a2 2 0 002-2V8l-5-6H9z"/>
+                    </svg>
+                    <p class="text-[13px]">Nota masih kosong</p>
+                    <p class="text-[11px] mt-1">Ketuk menu untuk menambah</p>
+                </div>
+            </template>
+
+            <template x-for="item in cart" :key="item.id">
+                <div class="py-2.5">
+                    <div class="flex items-baseline gap-2">
+                        <span class="text-[13px] font-medium text-ink truncate" x-text="item.name"></span>
+                        <span class="flex-1 border-b border-dotted border-rule self-center translate-y-[-3px]"></span>
+                        <span class="font-mono text-[13px] font-semibold text-ink tnum shrink-0" x-text="formatRupiah(item.price * item.qty)"></span>
+                    </div>
+                    <div class="flex items-center gap-1.5 mt-1.5">
+                        <button @click="decreaseQty(item.id)"
+                                class="w-6 h-6 rounded-md border border-rule text-inksoft text-sm leading-none flex items-center justify-center hover:border-primary-400 hover:text-primary-600 transition-colors duration-150">−</button>
+                        <span class="w-7 text-center font-mono text-[12px] font-semibold text-ink tnum" x-text="item.qty + '×'"></span>
+                        <button @click="increaseQty(item.id)"
+                                class="w-6 h-6 rounded-md border border-rule text-inksoft text-sm leading-none flex items-center justify-center hover:border-primary-400 hover:text-primary-600 transition-colors duration-150">+</button>
+                        <button @click="removeItem(item.id)" class="ml-auto text-inkmuted/70 hover:text-danger-600 transition-colors p-1">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </template>
+        </div>
+
+        <div class="ticket-dash h-px mx-5 shrink-0"></div>
+
+        <!-- Kaki nota: total + bayar -->
+        <div class="px-5 py-4 space-y-3.5 shrink-0 bg-paper">
+            <div class="flex items-baseline justify-between">
+                <span class="text-[11px] font-semibold uppercase tracking-[0.14em] text-inkmuted">Total</span>
+                <span class="font-mono font-bold text-2xl text-ink tnum" x-text="formatRupiah(subtotal)"></span>
+            </div>
+
+            <!-- Metode: 2 tombol (Tunai / Non Tunai) -->
+            <div class="grid grid-cols-2 gap-1.5">
+                <button @click="paymentMethod = 'cash'"
+                        :class="paymentMethod === 'cash' ? 'bg-primary-600 text-white border-primary-600' : 'bg-paper text-inksoft border-rule hover:border-inkmuted/60'"
+                        class="py-2 rounded-lg text-[13px] font-semibold border transition-colors duration-150">Tunai</button>
+                <button @click="paymentMethod = 'nontunai'"
+                        :class="paymentMethod === 'nontunai' ? 'bg-warning-600 text-white border-warning-600' : 'bg-paper text-inksoft border-rule hover:border-inkmuted/60'"
+                        class="py-2 rounded-lg text-[13px] font-semibold border transition-colors duration-150">Non Tunai</button>
+            </div>
+
+            <!-- Tunai: uang diterima + kembalian -->
+            <div x-show="paymentMethod === 'cash' && cart.length > 0" x-transition.opacity.duration.150ms x-cloak class="space-y-2">
+                <div class="flex gap-1.5 flex-wrap">
+                    <template x-for="amt in quickCash" :key="amt">
+                        <button @click="cashPaid = amt"
+                                :class="cashPaid === amt ? 'bg-primary-50 border-primary-400 text-primary-700' : 'border-rule text-inksoft hover:border-inkmuted/60'"
+                                class="px-2.5 py-1 rounded-md border font-mono text-[11px] tnum transition-colors duration-150" x-text="formatRupiah(amt)"></button>
+                    </template>
+                </div>
+                <div class="flex items-center gap-3">
+                    <input type="number" min="0" x-model.number="cashPaid" @keydown="if ($event.key === '-') $event.preventDefault()" @input="if (Number(cashPaid) < 0) cashPaid = 0" placeholder="Uang diterima…"
+                           class="flex-1 px-3 py-2 rounded-lg bg-canvas border border-rule font-mono font-semibold text-ink text-sm tnum placeholder:text-inkmuted/60 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-100 transition-colors duration-150">
+                </div>
+                <div class="flex items-baseline justify-between" x-show="cashPaid > 0" x-cloak>
+                    <span class="text-[12px] text-inkmuted">Kembalian</span>
+                    <span class="font-mono font-bold tnum" :class="change >= 0 ? 'text-success-600' : 'text-danger-600'" x-text="formatRupiah(change)"></span>
+                </div>
+            </div>
+
+            <!-- Non tunai -->
+            <div x-show="paymentMethod === 'nontunai' && cart.length > 0" x-transition.opacity.duration.150ms x-cloak
+                 class="text-[12px] text-inkmuted">
+                Pembayaran via QRIS / debit — konfirmasi mesin EDC sebelum menekan tombol bayar.
+            </div>
+
+            <!-- Tombol bayar -->
+            <button @click="processPayment()"
+                    :disabled="cart.length === 0 || (paymentMethod === 'cash' && change < 0)"
+                    :class="cart.length === 0 || (paymentMethod === 'cash' && change < 0) ? 'opacity-40 cursor-not-allowed' : 'hover:bg-primary-700'"
+                    class="w-full py-2.5 bg-primary-600 text-white font-bold text-[15px] rounded-lg transition-all duration-150">
+                <span x-text="paymentMethod === 'nontunai' ? 'Bayar Non Tunai' : 'Bayar Sekarang'"></span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ============ Modal sukses ============ -->
+    <div x-show="showSuccessModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4" x-transition.opacity.duration.150ms>
+        <div class="absolute inset-0 bg-ink/40" @click="showSuccessModal = false"></div>
+        <div class="relative bg-paper rounded-2xl shadow-pop border border-rule max-w-xs w-full text-center overflow-hidden" x-transition.scale.duration.150ms>
+            <div class="px-6 pt-7 pb-5">
+                <div class="w-12 h-12 rounded-full bg-success-50 text-success-600 flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <h3 class="text-[15px] font-bold text-ink">Transaksi tercatat</h3>
+                <p class="font-mono text-xl font-bold text-ink tnum mt-1.5" x-text="formatRupiah(subtotal)"></p>
+                <div x-show="paymentMethod === 'cash' && change > 0" x-cloak class="mt-3 bg-success-50 rounded-lg p-3">
+                    <p class="text-[11px] uppercase tracking-wide text-success-700 font-semibold">Kembalian</p>
+                    <p class="font-mono font-bold text-success-700 tnum" x-text="formatRupiah(change)"></p>
+                </div>
+            </div>
+            <div class="ticket-dash h-px"></div>
+            <div class="p-4 bg-canvas/60">
+                <button @click="showSuccessModal = false; clearCart(); cashPaid = 0;"
+                        class="w-full py-2.5 bg-primary-600 hover:bg-primary-700 text-white font-semibold text-sm rounded-lg transition-colors duration-150">
+                    Nota Baru
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+        </main>
+
+        <footer class="px-4 sm:px-6 lg:px-8 pb-5">
+            <p class="text-[11px] text-inkmuted/80">&copy; 2026 Kasiro — POS Warung Makan UMKM</p>
+        </footer>
+    </div>
+
+    <script>
+function posApp() {
+    // Menu berasal dari database (lihat MenuController::kasir) — bukan localStorage.
+    // Gambar tetap file lokal public/images/menu/*, dikirim sebagai URL oleh server.
+    const serverMenus = [{"id":1,"name":"Nasi Goreng","category":"makanan","price":15000,"image":""},{"id":2,"name":"Capjay","category":"makanan","price":18000,"image":""},{"id":3,"name":"Bakmi Kuah","category":"makanan","price":14000,"image":""},{"id":4,"name":"Nasi Goreng Spesial","category":"makanan","price":22000,"image":""},{"id":5,"name":"Mie Goreng","category":"makanan","price":15000,"image":""},{"id":7,"name":"Es Teh","category":"minuman","price":5000,"image":""},{"id":8,"name":"Es Jeruk","category":"minuman","price":6000,"image":""},{"id":9,"name":"Kopi Panas","category":"minuman","price":7000,"image":""},{"id":11,"name":"Air Mineral","category":"minuman","price":4000,"image":""}];
+
+    return {
+        search: '',
+        activeCategory: 'all',
+        paymentMethod: 'cash',
+        cashPaid: 0,
+        showSuccessModal: false,
+        cart: [],
+        nomorNota: '',
+        quickCash: [20000, 50000, 100000],
+        menus: serverMenus,
+        get filteredMenus() {
+            return this.menus.filter(item => {
+                const matchSearch = item.name.toLowerCase().includes(this.search.toLowerCase());
+                const matchCategory = this.activeCategory === 'all' || item.category === this.activeCategory;
+                return matchSearch && matchCategory;
+            });
+        },
+        get subtotal() {
+            return this.cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+        },
+        get change() {
+            return this.cashPaid - this.subtotal;
+        },
+        addToCart(item) {
+            const existing = this.cart.find(c => c.id === item.id);
+            if (existing) {
+                existing.qty++;
+            } else {
+                this.cart.push({ ...item, qty: 1 });
+            }
+        },
+        increaseQty(id) {
+            const item = this.cart.find(c => c.id === id);
+            if (item) item.qty++;
+        },
+        decreaseQty(id) {
+            const item = this.cart.find(c => c.id === id);
+            if (item) {
+                if (item.qty > 1) {
+                    item.qty--;
+                } else {
+                    this.removeItem(id);
+                }
+            }
+        },
+        removeItem(id) {
+            this.cart = this.cart.filter(c => c.id !== id);
+        },
+        clearCart() {
+            this.cart = [];
+            this.cashPaid = 0;
+        },
+        getCartQty(id) {
+            const item = this.cart.find(c => c.id === id);
+            return item ? item.qty : 0;
+        },
+        formatRupiah(num) {
+            if (num === null || num === undefined || isNaN(num)) return 'Rp 0';
+            return 'Rp ' + Number(num).toLocaleString('id-ID');
+        },
+        processPayment() {
+            if (this.cart.length === 0) return;
+            if (this.paymentMethod === 'cash' && this.change < 0) return;
+            this.showSuccessModal = true;
+        },
+        init() {
+            this.nomorNota = 'No. ' + String(Math.floor(Math.random() * 900) + 100).padStart(3, '0');
+            // Shortcut: "/" fokus ke pencarian, Escape menutup modal
+            window.addEventListener('keydown', (e) => {
+                if (e.key === '/' && document.activeElement !== this.$refs.search) {
+                    e.preventDefault();
+                    this.$refs.search.focus();
+                }
+                if (e.key === 'Escape') {
+                    this.showSuccessModal = false;
+                }
+            });
+        }
+    }
+}
+</script>
+</body>
+</html>
